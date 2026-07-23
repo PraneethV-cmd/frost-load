@@ -42,6 +42,11 @@ func root(w http.ResponseWriter, req *http.Request) {
 		Name: name,
 		Port: port,
 	}
+
+	if req.URL.Path != "/" {
+		http.NotFound(w, req)
+	}
+
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(resp)
@@ -63,8 +68,8 @@ func sleep(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	name = os.Getenv("name")
-	port = os.Getenv("port")
+	name = os.Getenv("NAME")
+	port = os.Getenv("PORT")
 
 	if name == "" {
 		name = "default"
@@ -77,8 +82,13 @@ func main() {
 	http.HandleFunc("/", root)
 	http.HandleFunc("/health", health)
 	http.HandleFunc("/sleep", sleep)
+
+	svr := http.Server{
+		Addr:              ":" + port,
+		ReadHeaderTimeout: 4 * time.Second,
+	}
+
 	log.Printf("[%s] running on %s", name, port)
-	log.Fatal(
-		http.ListenAndServe(":"+port, nil),
-	)
+
+	log.Fatal(svr.ListenAndServe())
 }
