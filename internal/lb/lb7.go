@@ -32,6 +32,15 @@ func New(p *pool.Pool) (*LoadBalancer, error) {
 	}, nil
 }
 
-type Handler interface {
-	ServeHTTP(w http.ResponseWriter, r *http.Request)
+func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	b, err := lb.pool.Next()
+	if err != nil {
+		http.Error(w, "no healthy backends", http.StatusServiceUnavailable)
+		return
+	}
+
+	b.AddConn()
+	defer b.RemoveConn()
+	lb.proxies[b].ServeHTTP(w, r)
 }
+
