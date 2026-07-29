@@ -32,5 +32,7 @@ func main() {
 	}
 
 	fmt.Println("frostload on :9000")
+
+	go p1.HealthCheck(3 * time.Second)
 	log.Fatal(s.ListenAndServe())
 }
