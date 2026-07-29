@@ -26,3 +26,6 @@ go.work.sum
 
 #session markdowns
 claude-session.md
+
+# macOS AppleDouble junk (this repo lives on a non-APFS volume)
+._*
