@@ -1,7 +1,6 @@
 package pool
 
 import (
-	"errors"
 	"sync/atomic"
 )
 
@@ -60,9 +59,10 @@ type Pool struct {
 	backends []*Backend
 	rotation []*Backend
 	counter  atomic.Uint64
+	strategy Strategy
 }
 
-func NewPool(backends []*Backend) *Pool {
+func NewPool(backends []*Backend, strat Strategy) *Pool {
 	rotationCapacity := 0
 
 	for i := range backends {
@@ -83,6 +83,7 @@ func NewPool(backends []*Backend) *Pool {
 	p := Pool{
 		backends: backends,
 		rotation: r,
+		strategy: strat,
 	}
 
 	return &p
@@ -92,21 +93,26 @@ func (p *Pool) Backends() []*Backend {
 	return p.backends
 }
 
+//
+//func (p *Pool) Next() (*Backend, error) {
+//	length := uint64(len(p.rotation))
+//
+//	if length == 0 {
+//		return nil, errors.New("no backends to be found")
+//	}
+//
+//	start := (p.counter.Add(1) - 1) % length
+//	for i := range length {
+//		idx := (start + i) % length
+//		b := p.rotation[idx]
+//		if b.IsAlive() {
+//			return b, nil
+//		}
+//	}
+//
+//	return nil, errors.New("no healthy backends")
+//}
+
 func (p *Pool) Next() (*Backend, error) {
-	length := uint64(len(p.rotation))
-
-	if length == 0 {
-		return nil, errors.New("no backends to be found")
-	}
-
-	start := (p.counter.Add(1) - 1) % length
-	for i := range length {
-		idx := (start + i) % length
-		b := p.rotation[idx]
-		if b.IsAlive() {
-			return b, nil
-		}
-	}
-
-	return nil, errors.New("no healthy backends")
+	return p.strategy.Pick(p)
 }

@@ -17,7 +17,8 @@ func main() {
 
 	backends := []*pool.Backend{b1, b2, b3}
 
-	p1 := pool.NewPool(backends)
+	p1 := pool.NewPool(backends, pool.LeastConns{})
+	// p2 := pool.NewPool(backends, pool.RoundRobin{})
 
 	balancer, err := lb.New(p1)
 	if err != nil {
