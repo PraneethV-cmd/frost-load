@@ -21,6 +21,8 @@ func main() {
 	// p2 := pool.NewPool(backends, pool.RoundRobin{})
 
 	balancer, err := lb.New(p1)
+	l4 := lb.NewLoadbalancer4(p1)
+
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -35,5 +37,9 @@ func main() {
 	fmt.Println("frostload on :9000")
 
 	go p1.HealthCheck(3 * time.Second)
+
+	go func() {
+		log.Fatal(l4.ListenAndHandle(":9090"))
+	}()
 	log.Fatal(s.ListenAndServe())
 }
