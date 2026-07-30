@@ -65,7 +65,7 @@ comes back.
 - [x] Backend pool + weighted round-robin
 - [x] L7 reverse proxy
 - [x] Health checks
-- [ ] Least-connections balancing
-- [ ] L4 (TCP) proxy
+- [x] Least-connections balancing
+- [x] L4 (TCP) proxy
 - [ ] Docker Compose
 - [ ] Nix (dev shell + image)
