@@ -1,0 +1,10 @@
+# macOS AppleDouble junk — Docker chokes reading their xattrs on non-APFS volumes
+._*
+.DS_Store
+
+# not needed in the build context
+.git
+*.md
+frost-load
+Dockerfile
+.dockerignore

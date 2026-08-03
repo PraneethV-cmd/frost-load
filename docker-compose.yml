@@ -1,0 +1,23 @@
+services:
+  web-1:
+    image: frostload
+    command: backend
+    environment: { NAME: web-1, PORT: "8080" }
+  web-2:
+    image: frostload
+    command: backend
+    environment: { NAME: web-2, PORT: "8080" }
+  web-3:
+    image: frostload
+    command: backend
+    environment: { NAME: web-3, PORT: "8080" }
+
+  frostload:
+    image: frostload
+    command: frostload
+    environment:
+      BACKENDS: "http://web-1:8080,http://web-2:8080,http://web-3:8080"
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    depends_on: [web-1, web-2, web-3]
